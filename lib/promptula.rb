@@ -23,7 +23,7 @@ module Promptula
       ret += PATH_SEPARATOR.foreground(:black).background(BACKGROUND) if segment != '~'
       ret += "#{segment}".background BACKGROUND
     end
-    "#{ret}"
+    ret + ' '.background(BACKGROUND)
   end
 
   def self.git()
@@ -45,6 +45,6 @@ module Promptula
 
   def self.prompt()
     Sickill::Rainbow.enabled = true
-    (cwd() + git())
+    (cwd() + git()) + ''.reset() + ' '
   end
 end
