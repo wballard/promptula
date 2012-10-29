@@ -3,17 +3,9 @@ require "rainbow"
 module Promptula
   SEPARATOR = "\u25B6"
   SEPARATOR_THIN = "\u276F"
-  #PATH_SEPARATOR = "\u22F0"
   PATH_SEPARATOR = '/'
   BACKGROUND = "3a3a3a"
-
-  def self.pre(color)
-    SEPARATOR.foreground(color).background(BACKGROUND).inverse
-  end
-
-  def self.post(color)
-    SEPARATOR.foreground(color).reset()
-  end
+  GLYPH = "\u2733"
 
   def self.cwd()
     current = Dir.pwd
@@ -34,17 +26,17 @@ module Promptula
       end
     end
     status = `git status --porcelain`
-    untracked = (status.match('\?\?') or '').size > 0 ? '+' : ''
+    untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
     dirty = status.size > 0
     background = dirty ? :red : :green
 
-    pre(background) + 
+    SEPARATOR.foreground(background).background(BACKGROUND).inverse + 
     "#{branch}#{untracked} ".background(background) +
-    post(background)
+    SEPARATOR.foreground(background).reset()
   end
 
   def self.prompt()
     Sickill::Rainbow.enabled = true
-    (cwd() + git()) + ''.reset() + ' '
+    cwd() + git()
   end
 end
