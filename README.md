@@ -6,6 +6,7 @@ as well as give you some ideas about how you can tweak your shell.
 ~~~
 gem install promptula
 promptula --install
+source ~/.bash_profile
 ~~~
 
 ...and that's it.

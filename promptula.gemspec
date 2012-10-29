@@ -15,5 +15,6 @@ Gem::Specification.new do |gem|
   gem.version       = Promptula::VERSION
 
   gem.add_dependency 'rainbow'
+  gem.add_dependency 'trollop'
   gem.add_development_dependency 'bundler'
 end

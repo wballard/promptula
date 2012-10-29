@@ -2,4 +2,30 @@
 # vim: filetype=ruby
 
 require 'promptula'
-puts Promptula.prompt
+require 'trollop'
+
+opts = Trollop::options do
+  opt :install, "Install into your BASH"
+end
+
+install_with = <<jam
+function _update_ps1()
+{
+   export PS1="$(promptula)"
+}
+
+export PROMPT_COMMAND="_update_ps1"
+jam
+
+if opts[:install]
+  ['~/.bashrc', '~/.bash_profile'].each do |profile|
+    if File.exists? File.expand_path profile
+      open(File.expand_path(profile), 'a') do |f|
+        f.puts install_with
+      end
+    end
+  end
+else
+  puts Promptula.prompt
+end
+
