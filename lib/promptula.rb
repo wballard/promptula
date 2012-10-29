@@ -8,11 +8,11 @@ module Promptula
   BACKGROUND = "3a3a3a"
 
   def self.pre(color)
-    SEPARATOR.foreground(BACKGROUND).background(color)
+    SEPARATOR.foreground(color).background(BACKGROUND).inverse
   end
 
   def self.post(color)
-    SEPARATOR.foreground(color).background(:default)
+    SEPARATOR.foreground(color).reset()
   end
 
   def self.cwd()
@@ -20,10 +20,10 @@ module Promptula
     home = ENV['HOME']
     ret = ''
     current.sub(home, '~').split('/').each do |segment|
-      ret += PATH_SEPARATOR if segment != '~'
-      ret += "#{segment}"
+      ret += PATH_SEPARATOR.foreground(:black).background(BACKGROUND) if segment != '~'
+      ret += "#{segment}".background BACKGROUND
     end
-    "#{ret} ".background(BACKGROUND)
+    "#{ret}"
   end
 
   def self.git()
@@ -45,6 +45,6 @@ module Promptula
 
   def self.prompt()
     Sickill::Rainbow.enabled = true
-    cwd() + git() + ' '.reset()
+    (cwd() + git())
   end
 end
