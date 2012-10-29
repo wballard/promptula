@@ -17,8 +17,8 @@ module Promptula
   end
 
   def self.git()
-    current =  `git status`
-    current
+    branch = `git branch`.sub('*', '').chomp
+    branch
   end
 
   def self.prompt()
