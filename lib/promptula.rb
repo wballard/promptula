@@ -19,13 +19,13 @@ module Promptula
   end
 
   def self.git()
-    branch = ''
-    `git branch 2>/dev/null`.split("\n").each do |line|
+    branch = `git rev-parse --abbrev-ref HEAD 2>/dev/null`.chomp
+    branch.split("\n").each do |line|
       if line[0] == '*'
         branch = line.sub('*', '').chomp
       end
     end
-    status = `git rev-parse --abbrev-ref HEAD 2>/dev/null`
+    status = `git status --porcelain 2>/dev/null`
     untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
     dirty = status.size > 0
     background = dirty ? :red : :green
