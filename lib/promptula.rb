@@ -32,7 +32,7 @@ module Promptula
     untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
     dirty = status.size > 0
     background = dirty ? :red : :green
-    push_pull  = `git rev-list --left-right #{remote}/#{branch}...HEAD`.split("\n")
+    push_pull  = `git rev-list --left-right remotes/#{remote}/#{branch}...HEAD`.split("\n")
     to_push = (push_pull.select {|m| m.start_with? '>'}).length
     to_pull = (push_pull.select {|m| m.start_with? '<'}).length
 
