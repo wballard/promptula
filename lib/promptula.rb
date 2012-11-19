@@ -25,12 +25,12 @@ module Promptula
         branch = line.sub('*', '').chomp
       end
     end
-    status = `git status --porcelain 2>/dev/null`
+    status = `git status --ignore-submodules --porcelain 2>/dev/null`
     untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
     dirty = status.size > 0
     background = dirty ? :red : :green
 
-    SEPARATOR.foreground(background).background(BACKGROUND).inverse + 
+    SEPARATOR.foreground(background).background(BACKGROUND).inverse +
     "#{branch}#{untracked} ".background(background) +
     SEPARATOR.foreground(background).reset()
   end
