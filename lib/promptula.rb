@@ -21,31 +21,35 @@ module Promptula
   end
 
   def self.git()
-    branch = `git rev-parse --abbrev-ref HEAD 2>/dev/null`.chomp
-    branch.split("\n").each do |line|
-      if line[0] == '*'
-        branch = line.sub('*', '').chomp
+    if system 'git status > /dev/null 2>/dev/null'
+      branch = `git rev-parse --abbrev-ref HEAD`.chomp
+      branch.split("\n").each do |line|
+        if line[0] == '*'
+          branch = line.sub('*', '').chomp
+        end
       end
-    end
-    remote = `git config branch.#{branch}.remote`.strip
-    status = `git status --ignore-submodules --porcelain 2>/dev/null`
-    untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
-    dirty = status.size > 0
-    background = dirty ? :red : :green
-    push_pull  = `git rev-list --left-right remotes/#{remote}/#{branch}...HEAD`.split("\n")
-    to_push = (push_pull.select {|m| m.start_with? '>'}).length
-    to_pull = (push_pull.select {|m| m.start_with? '<'}).length
+      remote = `git config branch.#{branch}.remote`.strip
+      status = `git status --ignore-submodules --porcelain`
+      untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
+      dirty = status.size > 0
+      background = dirty ? :red : :green
+      push_pull  = `git rev-list --left-right remotes/#{remote}/#{branch}...HEAD`.split("\n")
+      to_push = (push_pull.select {|m| m.start_with? '>'}).length
+      to_pull = (push_pull.select {|m| m.start_with? '<'}).length
 
-    prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
-    prompt += "#{branch}#{untracked} ".background(background)
-    if to_pull > 0
-      prompt += "#{PULL_ARROW}#{to_pull} ".background(background)
+      prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
+      prompt += "#{branch}#{untracked} ".background(background)
+      if to_pull > 0
+        prompt += "#{PULL_ARROW}#{to_pull} ".background(background)
+      end
+      if to_push > 0
+        prompt += "#{PUSH_ARROW}#{to_push} ".background(background)
+      end
+      prompt += SEPARATOR.foreground(background).reset()
+      prompt
+    else
+      ''
     end
-    if to_push > 0
-      prompt += "#{PUSH_ARROW}#{to_push} ".background(background)
-    end
-    prompt += SEPARATOR.foreground(background).reset()
-    prompt
   end
 
   def self.prompt()
