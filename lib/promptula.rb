@@ -36,21 +36,19 @@ module Promptula
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
       dirty = status.size > 0
       background = dirty ? :red : :green
-
+      prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
+      prompt += "#{branch}#{untracked} ".background(background)
       remote = tracking[branch]
       if remote
         push_pull  = `git rev-list --left-right #{remote}...HEAD`.split("\n")
         to_push = (push_pull.select {|m| m.start_with? '>'}).length
         to_pull = (push_pull.select {|m| m.start_with? '<'}).length
-      end
-
-      prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
-      prompt += "#{branch}#{untracked} ".background(background)
-      if to_pull > 0
-        prompt += "#{PULL_ARROW}#{to_pull} ".background(background)
-      end
-      if to_push > 0
-        prompt += "#{PUSH_ARROW}#{to_push} ".background(background)
+        if to_pull > 0
+          prompt += "#{PULL_ARROW}#{to_pull} ".background(background)
+        end
+        if to_push > 0
+          prompt += "#{PUSH_ARROW}#{to_push} ".background(background)
+        end
       end
       prompt += SEPARATOR.foreground(background).reset()
       prompt
