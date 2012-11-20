@@ -28,14 +28,21 @@ module Promptula
           branch = line.sub('*', '').chomp
         end
       end
-      remote = `git config branch.#{branch}.remote`.strip
+      tracking = Hash[`git for-each-ref --format='%(refname:short) %(upstream:short)' refs/heads`
+        .split("\n")
+        .map {|l| l.split ' '}]
+
       status = `git status --ignore-submodules --porcelain`
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
       dirty = status.size > 0
       background = dirty ? :red : :green
-      push_pull  = `git rev-list --left-right remotes/#{remote}/#{branch}...HEAD`.split("\n")
-      to_push = (push_pull.select {|m| m.start_with? '>'}).length
-      to_pull = (push_pull.select {|m| m.start_with? '<'}).length
+
+      remote = tracking[branch]
+      if remote
+        push_pull  = `git rev-list --left-right #{remote}...HEAD`.split("\n")
+        to_push = (push_pull.select {|m| m.start_with? '>'}).length
+        to_pull = (push_pull.select {|m| m.start_with? '<'}).length
+      end
 
       prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
       prompt += "#{branch}#{untracked} ".background(background)
