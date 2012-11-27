@@ -5,6 +5,7 @@ require 'promptula'
 require 'trollop'
 
 opts = Trollop::options do
+  version Promptula::VERSION
   opt :install, "Install into your BASH"
 end
 

@@ -22,7 +22,7 @@ module Promptula
 
   def self.git()
     if system 'git status > /dev/null 2>/dev/null'
-      branch = `git rev-parse --abbrev-ref HEAD`.chomp
+      branch = `git rev-parse --abbrev-ref HEAD 2>/dev/null`.chomp
       branch.split("\n").each do |line|
         if line[0] == '*'
           branch = line.sub('*', '').chomp
@@ -31,7 +31,6 @@ module Promptula
       tracking = Hash[`git for-each-ref --format='%(refname:short) %(upstream:short)' refs/heads`
         .split("\n")
         .map {|l| l.split ' '}]
-
       status = `git status --ignore-submodules --porcelain`
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
       dirty = status.size > 0
