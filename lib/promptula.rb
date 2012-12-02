@@ -1,24 +1,12 @@
 require "promptula/version"
 require "rainbow"
 module Promptula
-  SEPARATOR = "\u25B6"
-  SEPARATOR_THIN = "\u276F"
-  PATH_SEPARATOR = '/'
-  BACKGROUND = "3a3a3a"
+
+  LEFT_EDGE = "\u25C0"
+  RIGHT_EDGE = "\u25B6"
   GLYPH = "\u2733"
   PULL_ARROW = "\u2798"
   PUSH_ARROW = "\u279A"
-
-  def self.cwd()
-    current = Dir.pwd
-    home = ENV['HOME']
-    ret = ''
-    current.sub(home, '~').split('/').each do |segment|
-      ret += PATH_SEPARATOR.foreground(:black).background(BACKGROUND) if segment != '~'
-      ret += "#{segment}".background BACKGROUND
-    end
-    ret + ' '.background(BACKGROUND)
-  end
 
   def self.git()
     if system 'git status > /dev/null 2>/dev/null'
@@ -35,22 +23,22 @@ module Promptula
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
       dirty = status.size > 0
       background = dirty ? :red : :green
-      prompt = SEPARATOR.foreground(background).background(BACKGROUND).inverse
-      prompt += "#{branch}#{untracked} ".background(background)
+      prompt = LEFT_EDGE.foreground(background)
+      prompt += "#{branch}#{untracked}".foreground(background).background(:white).inverse()
       remote = tracking[branch]
       if remote
         push_pull  = `git rev-list --left-right #{remote}...HEAD`.split("\n")
         to_push = (push_pull.select {|m| m.start_with? '>'}).length
         to_pull = (push_pull.select {|m| m.start_with? '<'}).length
         if to_pull > 0
-          prompt += "#{PULL_ARROW}#{to_pull} ".background(background)
+          prompt += " #{PULL_ARROW}#{to_pull}".foreground(background).background(:white).inverse()
         end
         if to_push > 0
-          prompt += "#{PUSH_ARROW}#{to_push} ".background(background)
+          prompt += " #{PUSH_ARROW}#{to_push}".foreground(background).background(:white).inverse()
         end
       end
-      prompt += SEPARATOR.foreground(background).reset()
-      prompt
+      prompt += RIGHT_EDGE.foreground(background)
+      prompt.chomp
     else
       ''
     end
@@ -58,6 +46,6 @@ module Promptula
 
   def self.prompt()
     Sickill::Rainbow.enabled = true
-    cwd() + git()
+    git()
   end
 end

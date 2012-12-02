@@ -10,12 +10,7 @@ opts = Trollop::options do
 end
 
 install_with = <<jam
-function _update_ps1()
-{
-   export PS1="$(promptula)"
-}
-
-export PROMPT_COMMAND="_update_ps1"
+export PROMPT_COMMAND='echo -ne $(promptula)'
 jam
 
 if opts[:install]

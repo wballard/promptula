@@ -88,8 +88,8 @@ module Sickill
 
       var = self.dup
       matched = var.match(/^(\e\[([\d;]+)m)*/)
-      var.insert(matched.end(0), '\[\033[' + code.to_s + 'm\]')
-      var.concat('\[\033[0m\]')
+      var.insert(matched.end(0), "\e[#{code}m")
+      var.concat("\e[0m") unless var =~ /\e\[0m$/
       var
     end
 
