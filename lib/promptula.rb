@@ -30,10 +30,10 @@ module Promptula
         to_push = (push_pull.select {|m| m.start_with? '>'}).length
         to_pull = (push_pull.select {|m| m.start_with? '<'}).length
         if to_pull > 0
-          prompt += "#{PULL_ARROW}#{to_pull} ".foreground(background).background(:white).inverse()
+          prompt += "#{PULL_ARROW}#{to_pull}".foreground(background).background(:white).inverse()
         end
         if to_push > 0
-          prompt += "#{PUSH_ARROW}#{to_push} ".foreground(background).background(:white).inverse()
+          prompt += "#{PUSH_ARROW}#{to_push}".foreground(background).background(:white).inverse()
         end
       end
       prompt += ']'.foreground(:white).background(background)
