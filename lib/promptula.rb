@@ -2,8 +2,6 @@ require "promptula/version"
 require "rainbow"
 module Promptula
 
-  LEFT_EDGE = "\u25C0"
-  RIGHT_EDGE = "\u25B6"
   GLYPH = "\u2733"
   PULL_ARROW = "\u2798"
   PUSH_ARROW = "\u279A"
@@ -20,11 +18,12 @@ module Promptula
         .split("\n")
         .map {|l| l.split ' '}]
       status = `git status --ignore-submodules --porcelain`
+      user = `git config --get user.initials`.strip
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
       dirty = status.size > 0
       background = dirty ? :red : :green
-      prompt = LEFT_EDGE.foreground(background)
-      prompt += " #{branch}#{untracked} ".foreground(background).background(:white).inverse()
+      prompt = '['.foreground(:white).background(background)
+      prompt += "#{branch}#{untracked}".foreground(background).background(:white).inverse()
       remote = tracking[branch]
       if remote
         push_pull  = `git rev-list --left-right #{remote}...HEAD`.split("\n")
@@ -37,7 +36,8 @@ module Promptula
           prompt += "#{PUSH_ARROW}#{to_push} ".foreground(background).background(:white).inverse()
         end
       end
-      prompt += RIGHT_EDGE.foreground(background)
+      prompt += ']'.foreground(:white).background(background)
+      prompt += user.foreground(:white).background(background)
       prompt.chomp
     else
       ''
