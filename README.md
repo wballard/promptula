@@ -18,6 +18,11 @@ need to be added...
 ~~~
 gem install promptula
 promptula --install
+~~~
+
+Then source either your .bashrc or your .bash_profile, as appropriate
+~~~
+source ~/.bashrc
 source ~/.bash_profile
 ~~~
 
