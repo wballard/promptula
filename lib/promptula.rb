@@ -14,9 +14,7 @@ module Promptula
           branch = line.sub('*', '').chomp
         end
       end
-      tracking = Hash[`git for-each-ref --format='%(refname:short) %(upstream:short)' refs/heads`
-        .split("\n")
-        .map {|l| l.split ' '}]
+      tracking = Hash[`git for-each-ref --format='%(refname:short) %(upstream:short)' refs/heads`.split("\n").map {|l| l.split ' '}]
       status = `git status --ignore-submodules --porcelain`
       user = `git config --get user.initials`.strip
       untracked = (status.match('\?\?') or '').size > 0 ? " #{GLYPH}" : ''
